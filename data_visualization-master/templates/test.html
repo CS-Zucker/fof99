@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>前端生成表格示例</title>
+</head>
+<body>
+    <div class="box2">
+        <input type="text" id="textInput" placeholder="输入关键字">
+        <button id="btn">搜索</button>
+    </div>
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>时间</th>
+                <th>价格</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+        </tbody>
+    </table>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#btn').click(function () {
+                var text = $('#textInput').val();
+                $.ajax({
+                    url: '/company_api',
+                    type: 'GET',
+                    data: { 'key': text },
+                    success: function (res) {
+                        console.log(res);
+                        if (res.success === 0) {
+                            const tableBody = $('#table-body');
+                            tableBody.empty(); // 清空表格内容
+
+                            for (let i = 0; i < res.value.time.length; i++) {
+                                const newRow = $('<tr>');
+                                const timeCell = $('<td>').text(res.value.time[i]);
+                                const priceCell = $('<td>').text(res.value.price[i]);
+                                newRow.append(timeCell, priceCell);
+                                tableBody.append(newRow);
+                            }
+                        }
+                    },
+                    error: function () {
+                        console.log('服务器错误');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
